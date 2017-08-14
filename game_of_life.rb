@@ -1,5 +1,4 @@
-WORLD_SIZE = [10, 10]
-
+# coding: utf-8
 def generate_world
   row_limit = WORLD_SIZE[0]
   column_limit = WORLD_SIZE[1]
@@ -14,33 +13,35 @@ def generate_world
     end
     world << column
   end
-  world.each do |cell|
-    puts cell.join("  ")
-  end
-
-  puts "\n"
   world
 end
 
 def next_generation world
   new_gen = world.map.with_index do |rval, row|
     rval.map.with_index do |val, col|
-      next_generation_state row, col
+      next_generation_state row, col, world
     end
   end
 
-  new_gen.each do |cell|
-    puts cell.join("  ")
-  end
-  
+  p = new_gen.map do |cell|
+    cell.map do  |c|
+      if c == 1
+        "\e[32m👹\e[0m"
+      else
+        "\e[31m#{c}\e[0m"
+        c
+      end
+    end.join("  ")
+  end.join("\n\n")
+
+  puts p
   new_gen
 end
 
-def next_generation_state row, col
-  states = get_neighbour_cell_states row, col
+def next_generation_state row, col, world
+  states = get_neighbour_cell_states row, col, world
   population = states.select{ |state| state >= 0 }.inject(:+).to_i
-
-  if is_a_live_cell? row, col
+  if is_a_live_cell? row, col, world
     return 0 if under_populated? population
     return 0 if over_populated? population
     return 1 if normally_populated? population
@@ -50,7 +51,7 @@ def next_generation_state row, col
   end
 end
 
-def get_neighbour_cell_states row, col
+def get_neighbour_cell_states row, col, world
   row_limit = WORLD_SIZE[0] - 1
   column_limit = WORLD_SIZE[1] - 1
   neighbours = get_neighbour_cells row, col
@@ -60,7 +61,7 @@ def get_neighbour_cell_states row, col
     if (row > row_limit) || (row < 0) || (column > column_limit) || (column < 0)
       -1
     else
-      WORLD[row][column]
+      world[row][column]
     end
   end
   cells
@@ -71,8 +72,8 @@ def get_neighbour_cells row, col
   cells
 end
 
-def is_a_live_cell? row, col
-  WORLD[row][col] == 1
+def is_a_live_cell? row, col, world
+  world[row][col] == 1
 end
 
 def under_populated? population
@@ -91,6 +92,19 @@ def will_come_to_life? population
   population == 3
 end
 
-WORLD = generate_world
+WORLD_SIZE = [20, 30]
 
-next_generation WORLD
+system('clear')
+world = generate_world
+# world = [[0,0,0,0,0],
+#          [0,0,1,1,1],
+#          [0,1,1,1,0],
+#          [0,0,0,0,0]]
+loop do
+  system('clear')
+  world = next_generation(world)
+  sleep 1
+  system('clear')
+  world = next_generation(world)
+  sleep 1
+end
