@@ -104,7 +104,4 @@ loop do
   system('clear')
   world = next_generation(world)
   sleep 1
-  system('clear')
-  world = next_generation(world)
-  sleep 1
 end
