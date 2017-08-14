@@ -79,7 +79,11 @@ def will_come_to_life? population
   population == 3
 end
 
-WORLD_SIZE = [20, 30]
+if !ARGV[0].nil? && !ARGV[1].nil?
+  WORLD_SIZE = [ARGV[0].to_i, ARGV[1].to_i]
+else
+  WORLD_SIZE = [20, 30]
+end
 
 system('clear')
 world = generate_world
@@ -103,5 +107,5 @@ loop do
   end.join("\n\n")
 
   puts printable
-  sleep 1
+  sleep 0.5
 end
