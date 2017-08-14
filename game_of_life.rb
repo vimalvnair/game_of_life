@@ -22,19 +22,6 @@ def next_generation world
       next_generation_state row, col, world
     end
   end
-
-  p = new_gen.map do |cell|
-    cell.map do  |c|
-      if c == 1
-        "\e[32m👹\e[0m"
-      else
-        "\e[31m#{c}\e[0m"
-        c
-      end
-    end.join("  ")
-  end.join("\n\n")
-
-  puts p
   new_gen
 end
 
@@ -102,6 +89,19 @@ world = generate_world
 #          [0,0,0,0,0]]
 loop do
   system('clear')
+
   world = next_generation(world)
+
+  printable = world.map do |cell|
+    cell.map do  |c|
+      if c == 1
+        "\e[32m👹\e[0m"
+      else
+        "◽"
+      end
+    end.join("  ")
+  end.join("\n\n")
+
+  puts printable
   sleep 1
 end
